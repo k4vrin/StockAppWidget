@@ -5,82 +5,70 @@
 //  Created by Mostafa Hosseini on 10/5/24.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
+    @StateObject private var viewModel: ContentViewModel = .init()
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+                HStack {
+                    TextField("Symbol", text: $viewModel.symbol)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .onChange(of: viewModel.symbol) { newValue in
+                            viewModel.symbol = newValue.uppercased() 
+                        }
+
+                    Button("Add") {
+                        viewModel.addStock()
+                    }
+                    .disabled(!viewModel.symbolValid)
+                }
+                if !viewModel.stockData.isEmpty {
+                    ForEach(viewModel.stockData) { stock in
+                        HStack {
+                            Text(stock.metaData.the2Symbol)
+
+                            Spacer()
+
+                            LineChart(values: stock.closeValues)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(
+                                            colors: [
+                                                .green.opacity(0.7),
+                                                .green.opacity(0.2),
+                                                .green.opacity(0.0),
+                                            ]
+                                        ),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(width: 150, height: 50)
+
+                            VStack(alignment: .trailing) {
+                                Text(stock.latestClose)
+                            }
+                        }
+                    }
+                    .onDelete { indexSet in
+                        viewModel.deleteStockData(at: indexSet)
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
+            .navigationTitle("Stock App")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }
