@@ -51,12 +51,29 @@
 			);
 			target = 4CC227152CC3C268005EE4CE /* StockWidgetExtension */;
 		};
+		4CE863D22CC5488000AF85DD /* Exceptions for "StockApp" folder in "StockWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LineChart.swift,
+				StockData.swift,
+				StockService.swift,
+			);
+			target = 4CC227152CC3C268005EE4CE /* StockWidgetExtension */;
+		};
+		4CE863DD2CC5548E00AF85DD /* Exceptions for "StockWidget" folder in "StockApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				RefreshStockIntent.swift,
+			);
+			target = 4CE28B722CB122CD001FFD1D /* StockApp */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4CC2271C2CC3C268005EE4CE /* StockWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				4CE863DD2CC5548E00AF85DD /* Exceptions for "StockWidget" folder in "StockApp" target */,
 				4CC227302CC3C269005EE4CE /* Exceptions for "StockWidget" folder in "StockWidgetExtension" target */,
 			);
 			path = StockWidget;
@@ -64,6 +81,9 @@
 		};
 		4CE28B752CB122CD001FFD1D /* StockApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4CE863D22CC5488000AF85DD /* Exceptions for "StockApp" folder in "StockWidgetExtension" target */,
+			);
 			path = StockApp;
 			sourceTree = "<group>";
 		};

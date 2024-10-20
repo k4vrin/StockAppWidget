@@ -61,17 +61,9 @@ final class ContentViewModel: ObservableObject {
     }
     
     func fetchStockData(symbol: String) {
-        let url = URL(string: "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=\(symbol)&interval=5min&apikey=\(APIKEY)")!
         
-        URLSession.shared.dataTaskPublisher(for: url)
-            .tryMap { item in
-                guard let httpResponse = item.response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    throw URLError(.badServerResponse)
-                }
-                
-                return item.data
-            }
-            .decode(type: StockData.self, decoder: JSONDecoder())
+        StockService
+            .fetchStocks(for: symbol)
             .sink { completion in
                 
                 switch completion {
@@ -115,4 +107,4 @@ final class ContentViewModel: ObservableObject {
 }
 
 
-let APIKEY = "IacgrE6yzp5vKl64F7wiScVQ8v3Ms3mq"
+
